@@ -1,10 +1,11 @@
+#define VALIDATION
+// #define SHOW_FIELD_AND_QUERIES
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
-
-#define VALIDATION
 
 
 void error(char *message, int status) {
@@ -93,7 +94,7 @@ void showField(short** field, short field_size) {
 
 		} printf("\n");
 
-	}
+	} printf("\n");
 
 }
 
@@ -107,7 +108,7 @@ void showQueries(short** queries, int queries_count) {
 
 		} printf("\n");
 
-	}
+	} printf("\n");
 
 }
 
@@ -143,15 +144,28 @@ void validateABCD(short** queries, short field_size, int queries_count) {
 
 long long calculateYeld(short** field, short* querie) {
 
+	short a = querie[0] - 1;
+	short b = querie[1] - 1;
+	short c = querie[2];
+	short d = querie[3];
+
 	long long yeld = 0;
 
-	// Some magic! xD
+	for (int i = b; i < d; i++) {
 
-	return 0;
+		for (int j = a; j < c; j++) {
+
+			yeld += field[i][j];
+
+		}
+
+	}
+
+	return yeld;
 
 }
 
-void calculateAndShow(short** field, short** queries, short field_size, int queries_count) {
+void calculateAndShow(short** field, short** queries, int queries_count) {
 
 	long long yield;
 
@@ -161,7 +175,7 @@ void calculateAndShow(short** field, short** queries, short field_size, int quer
 
 		printf("%lld\n", yield);
 
-	}
+	}  printf("\n");
 
 }
 
@@ -187,7 +201,14 @@ int main(void) {
 	validateABCD(queries, (short) field_size, (int) queries_count);
 	#endif
 
-	calculateAndShow(field, queries, (short) field_size, (int) queries_count);
+	printf("\n");
+
+	#ifdef SHOW_FIELD_AND_QUERIES
+	showField(field, (short) field_size);
+	showQueries(queries, (int) queries_count);
+	#endif
+
+	calculateAndShow(field, queries, (int) queries_count);
 
 	return 0;
 
