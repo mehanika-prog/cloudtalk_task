@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	api "task.sk/john/api/controllers/api"
+	"task.sk/john/api/controllers/api"
 )
 
 func main() {
