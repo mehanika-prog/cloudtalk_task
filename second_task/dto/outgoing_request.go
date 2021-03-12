@@ -13,7 +13,7 @@ func (a *AccuReqStr) GetReqStr(locationID int, language string, detail bool) str
 
 	reqStr := a.ServiceURL
 	reqStr += fmt.Sprintf("%d", locationID)
-	reqStr += "?apikey=" + "GmMFG73T5zbEdwhjKCFXCeaa9jNZPeMP" //a.APIKey
+	reqStr += "?apikey=" + a.APIKey
 	reqStr += "&language=" + language
 
 	if detail {

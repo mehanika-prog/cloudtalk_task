@@ -25,8 +25,10 @@ func GetLocations() map[string]int {
 	file, err := os.Open(locationsFilePath)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Can not open file " + locationsFilePath + " !")
 	}
+
+	defer file.Close()
 
 	reader := csv.NewReader(file)
 
@@ -40,7 +42,7 @@ func GetLocations() map[string]int {
 		cityID, err := strconv.Atoi(record[1])
 
 		if err != nil {
-			log.Fatal("Wrong locations format in " + locationsFilePath + "!")
+			log.Fatal("Wrong locations format in file " + locationsFilePath + " !")
 		}
 
 		locationsMap[record[0]] = cityID
@@ -56,7 +58,7 @@ func GetLocationKeys(locations map[string]int) []string {
 
 	keys := []string{}
 
-	for k, _ := range locations {
+	for k := range locations {
 		keys = append(keys, k)
 	}
 
@@ -86,14 +88,15 @@ var accuReqStr = dto.AccuReqStr{
 	APIKey:     os.Getenv("ACCUKEY"),
 }
 
-func getResFromAccu(cityID int) dto.IResponseDetail {
+func getResFromAccu(cityID int) *dto.IResponseDetail {
 
-	reqStr := accuReqStr.GetReqStr(cityID, "sk-sk", true)
+	reqStr := accuReqStr.GetReqStr(cityID, "en-en", true)
 
 	resp, err := http.Get(reqStr)
 
 	if err != nil {
 		fmt.Println(err.Error())
+		return nil
 	}
 
 	defer resp.Body.Close()
@@ -102,21 +105,27 @@ func getResFromAccu(cityID int) dto.IResponseDetail {
 
 	if err != nil {
 		fmt.Println(err.Error())
+		return nil
 	}
 
-	var body []dto.IResponseDetail
-
-	fmt.Println(data)
+	var body []*dto.IResponseDetail
 
 	err = json.Unmarshal(data, &body)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
 
 	return body[0]
 
 }
 
-func getCurrentCondition(city string, page int) dto.OResponse {
+func getCurrentCondition(city string, page int) *dto.OResponse {
 
-	res := dto.OResponse{
+	var res *dto.OResponse
+
+	res = &dto.OResponse{
 		Success: false,
 		Data:    []dto.Spot{},
 	}
@@ -160,7 +169,13 @@ func getCurrentCondition(city string, page int) dto.OResponse {
 
 		resFromAccu := getResFromAccu(cityID)
 
+		if resFromAccu == nil {
+			return nil
+		}
+
 		res.Success = true
+
+		res.Page = 1
 
 		res.Data = append(res.Data, dto.Spot{
 			City: city,
@@ -185,13 +200,18 @@ func TemperatureController(w http.ResponseWriter, r *http.Request) {
 
 	case "GET":
 
-		var res dto.OResponse
+		var res *dto.OResponse
 
 		urlParts := strings.Split(r.URL.String(), "/")
 
 		if len(urlParts) > 3 {
 
 			res = getCurrentCondition(urlParts[3], 1)
+
+			if res == nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("InternalServerError!")) //todo
+			}
 
 		} else {
 
@@ -202,6 +222,11 @@ func TemperatureController(w http.ResponseWriter, r *http.Request) {
 			}
 
 			res = getCurrentCondition("all", page)
+
+			if res == nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("InternalServerError!")) //todo
+			}
 
 		}
 
