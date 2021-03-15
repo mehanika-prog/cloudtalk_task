@@ -8,7 +8,7 @@
     "dev": "nodemon index.js"
   },
   "author": "",
-  "license": "ISIC",
+  "license": "ISC",
   "dependencies": {
     "mysql2": "^2.2.5",
     "sequelize": "^6.5.0",
