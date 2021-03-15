@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISIC",
   "dependencies": {
-    "hubspot": "^2.3.14",
     "mysql2": "^2.2.5",
     "sequelize": "^6.5.0",
     "sequelize-cli": "^6.2.0",
