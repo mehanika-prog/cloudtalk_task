@@ -1,3 +1,6 @@
 .vscode/
 .idea/
 third_task/v1/node_modules/
+third_task/v2/node_modules/
+third_task/v1/package-lock.json
+third_task/v2/package-lock.json
