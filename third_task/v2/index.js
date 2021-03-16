@@ -1,6 +1,7 @@
 const http = require('http')
 
 const db = require('./models')
+const utils = require('./utils')
 
 const handleWebhook = (req, res) => {
 
@@ -18,11 +19,15 @@ const handleWebhook = (req, res) => {
 
             req.on('end', () => {
 
-                console.log(JSON.parse(data))
+                const hook = JSON.parse(data[0].objectId)
+
+                const contact = utils.getContactById(data)
+
+                console.log(contact)
 
             })
 
-            res.write("mehanika")
+            res.write("ok")
             res.end()
             break
 
